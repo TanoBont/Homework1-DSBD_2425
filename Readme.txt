@@ -3,10 +3,10 @@ Questo documento descrive i passaggi necessari per eseguire la build, il deploy 
 
 1. Clonare la repository
     Per iniziare, clonare la repository del progetto utilizzando il seguente comando:
-        git clone <url-del-repository>
+        git clone git clone https://github.com/TanoBont/Homework1-DSBD_2425.git
 
 Posizionarsi nella cartella del progetto con il comando:
-cd Homework1-DSBD_Bonafede_Bontempo
+cd Homework1-DSBD_2425
 
 
 2. Build e avvio dei container
