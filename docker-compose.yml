@@ -1,0 +1,60 @@
+services:
+  db:
+    image: mysql:8.0                       
+    container_name: db                     
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword    
+      MYSQL_USER: myuser                   
+      MYSQL_PASSWORD: mypassword           
+      MYSQL_DATABASE: dsbd_db              
+    healthcheck:  
+      test: ["CMD-SHELL", "mysql -h 127.0.0.1 -u myuser -pmypassword -e 'SELECT 1'"] #faccio healthcheck con una query di test
+      interval: 10s                                                                   #in modo tale da dire a server e dc quando partire
+      timeout: 5s    
+      retries: 5
+    volumes:
+      - db_data:/var/lib/mysql             
+    networks:
+      - dsbd-network
+
+  grpc-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: grpc-server
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_USER: myuser
+      DB_PORT: 3306
+      DB_PASSWORD: mypassword
+      DB_NAME: dsbd_db
+    networks:
+      - dsbd-network
+    ports:
+      - "18072:18072"                    
+
+  data-collector:
+    build:
+      context: .
+      dockerfile: Dockerfile.datacollector
+    container_name: data-collector
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_USER: myuser
+      DB_PASSWORD: mypassword
+      DB_NAME: dsbd_db
+    networks:
+      - dsbd-network
+
+volumes:
+  db_data:
+
+networks:
+  dsbd-network:
+    driver: bridge

@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+service DSBDService {
+  rpc LoginUser(LoginUserRequest) returns (UserResponse);
+  rpc RegisterUser(RegisterUserRequest) returns (UserResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UserResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (UserResponse);
+  rpc GetTickerValue(GetTickerRequest) returns (TickerResponse);
+  rpc GetTickerAverage(GetTickerAverageRequest) returns (TickerResponse);
+}
+
+message LoginUserRequest {
+  string email = 1;
+}
+
+message RegisterUserRequest {
+  string email = 1;
+  string ticker = 2;
+  string message_id = 3;  // ID univoco calcolato come hash dell'email
+}
+
+message UpdateUserRequest {
+  string email = 1;
+  string ticker = 2;
+  string message_id = 3;  // ID univoco calcolato come hash(email + vecchio_ticker)
+}
+
+message DeleteUserRequest {
+  string email = 1;
+}
+
+message GetTickerRequest {
+  string email = 1;
+}
+
+message GetTickerAverageRequest {
+  string email = 1;
+  int32 lastXValues = 2;
+}
+
+message UserResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message TickerResponse {
+  bool success = 1;
+  string message = 2;
+  float value = 3;
+}
